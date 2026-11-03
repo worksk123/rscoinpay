@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RS Coin Pay — Turn Free Minutes Into Rewards</title>
+<meta name="description" content="RS Coin Pay is a task-based rewards app — complete simple guided tasks and earn rewards in your in-app balance.">
+<meta name="theme-color" content="#F4F8FF">
+<!-- LOGO: RscoinPay.png | APK: RscoinPay.apk — keep both next to this index.html -->
+<link rel="icon" href="RscoinPay.png">
+<link rel="apple-touch-icon" href="RscoinPay.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F8FF;
+    --bg-2:#EAF2FF;
+    --card:#FFFFFF;
+    --ink:#0B1B3A;
+    --ink-soft:#4A5B7C;
+    --ink-mute:#7A89A6;
+    --blue:#0A6CF0;
+    --blue-d:#0640C8;
+    --sky:#38C2FF;
+    --orange:#FF7A1A;
+    --amber:#FFB238;
+    --green:#16B866;
+    --line:rgba(10,108,240,.12);
+    --grad:linear-gradient(135deg,#38C2FF 0%,#1A8CF5 40%,#0A6CF0 70%,#0640C8 100%);
+    --warm:linear-gradient(135deg,#FFB238 0%,#FF7A1A 55%,#FF5400 100%);
+    --shadow:0 18px 40px -18px rgba(10,60,160,.28);
+    --shadow-lg:0 30px 70px -25px rgba(10,60,160,.38);
+    --r:22px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;background:var(--bg);}
+  body{
+    margin:0;font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--ink);
+    background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  h1,h2,h3,.brand,.btn{font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
+  img{max-width:100%;display:block;}
+  a{color:inherit;}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 20px;}
+  .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .warm-text{background:var(--warm);-webkit-background-clip:text;background-clip:text;color:transparent;}
+
+  /* ---------- Animated background ---------- */
+  .bg-blobs{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;}
+  .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;animation:drift 18s ease-in-out infinite;}
+  .b1{width:420px;height:420px;background:#BFE3FF;top:-120px;right:-80px;}
+  .b2{width:360px;height:360px;background:#FFE1C4;top:40%;left:-140px;animation-delay:-6s;}
+  .b3{width:300px;height:300px;background:#D6E4FF;bottom:-100px;right:10%;animation-delay:-12s;}
+  @keyframes drift{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(40px,30px) scale(1.08);}66%{transform:translate(-30px,20px) scale(.95);}}
+  .grid-bg{position:absolute;inset:0;background-image:radial-gradient(rgba(10,108,240,.10) 1px,transparent 1px);background-size:26px 26px;mask-image:radial-gradient(ellipse at 50% 0%,#000 30%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse at 50% 0%,#000 30%,transparent 75%);}
+
+  /* ---------- Header ---------- */
+  header{position:sticky;top:0;z-index:60;padding:12px 0;transition:all .3s ease;}
+  header.scrolled{background:rgba(255,255,255,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 6px 24px -14px rgba(10,60,160,.35);}
+  .nav{display:flex;align-items:center;justify-content:space-between;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.12rem;}
+  .brand img{width:40px;height:40px;border-radius:50%;object-fit:contain;background:#fff;box-shadow:0 0 0 3px #fff,0 6px 16px rgba(10,108,240,.35);}
+  .nav-cta{
+    background:var(--ink);color:#fff;text-decoration:none;padding:10px 18px;border-radius:999px;
+    font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.88rem;display:inline-flex;align-items:center;gap:8px;
+    transition:transform .2s ease,background .2s ease;
+  }
+  .nav-cta:hover{transform:translateY(-2px);background:var(--blue);}
+  .nav-cta svg{width:16px;height:16px;}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:40px 0 30px;position:relative;text-align:center;}
+  .pill{
+    display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+    padding:7px 14px 7px 8px;border-radius:999px;font-size:.8rem;font-weight:600;color:var(--ink-soft);
+    box-shadow:var(--shadow);
+  }
+  .pill .tag{background:var(--green);color:#fff;font-size:.68rem;font-weight:800;padding:3px 8px;border-radius:999px;display:inline-flex;align-items:center;gap:5px;}
+  .pill .tag i{width:6px;height:6px;border-radius:50%;background:#fff;animation:blink 1.2s infinite;}
+  @keyframes blink{50%{opacity:.25;}}
+
+  .orbit-stage{position:relative;width:230px;height:230px;margin:28px auto 22px;}
+  .ring{position:absolute;inset:0;border-radius:50%;border:1.5px dashed rgba(10,108,240,.25);animation:spin 22s linear infinite;}
+  .ring.r2{inset:28px;border-style:solid;border-color:rgba(255,122,26,.22);animation-duration:14s;animation-direction:reverse;}
+  .ring .sat{position:absolute;top:-9px;left:50%;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:var(--grad);box-shadow:0 0 0 4px #fff,0 6px 14px rgba(10,108,240,.45);}
+  .ring.r2 .sat{background:var(--warm);box-shadow:0 0 0 4px #fff,0 6px 14px rgba(255,122,26,.45);width:14px;height:14px;margin-left:-7px;top:-7px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .app-icon{
+    position:absolute;inset:56px;border-radius:50%;overflow:hidden;
+    box-shadow:0 0 0 6px #fff,0 22px 46px -10px rgba(10,108,240,.55);
+    animation:bob 4s ease-in-out infinite;
+  }
+  .app-icon{background:#fff;}
+  .app-icon img{width:100%;height:100%;object-fit:contain;background:#fff;transform:scale(1.3);}
+  @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+  .pulse-ring{position:absolute;inset:56px;border-radius:50%;border:2px solid var(--blue);animation:ping 2.4s ease-out infinite;}
+  @keyframes ping{0%{transform:scale(1);opacity:.6;}100%{transform:scale(1.7);opacity:0;}}
+  .chip-float{
+    position:absolute;background:#fff;border-radius:14px;padding:8px 12px;font-size:.76rem;font-weight:700;
+    display:flex;align-items:center;gap:6px;box-shadow:var(--shadow);white-space:nowrap;border:1px solid var(--line);
+    animation:bob 5s ease-in-out infinite;
+  }
+  .chip-float svg{width:15px;height:15px;}
+  .cf1{top:14px;left:-70px;color:var(--green);}
+  .cf2{bottom:22px;right:-74px;color:var(--orange);animation-delay:-2.5s;}
+
+  h1{
+    font-size:clamp(2.2rem,6vw,3.9rem);font-weight:800;line-height:1.05;letter-spacing:-.03em;margin:0 auto 16px;max-width:15ch;
+  }
+  .rotator{display:inline-block;position:relative;min-width:6ch;text-align:left;vertical-align:bottom;}
+  .rotator span{display:inline-block;background:var(--warm);-webkit-background-clip:text;background-clip:text;color:transparent;animation:wordIn .55s cubic-bezier(.2,.9,.3,1.2) both;}
+  @keyframes wordIn{from{opacity:0;transform:translateY(60%) rotateX(60deg);}to{opacity:1;transform:none;}}
+  .hero-sub{font-size:1.08rem;color:var(--ink-soft);max-width:52ch;margin:0 auto 26px;}
+  .hero-sub strong{color:var(--ink);}
+
+  .btn{
+    position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:10px;
+    background:var(--grad);color:#fff;text-decoration:none;font-weight:800;font-size:1.06rem;
+    padding:18px 32px;border-radius:18px;border:none;cursor:pointer;
+    box-shadow:0 16px 34px -10px rgba(10,108,240,.65),inset 0 1px 0 rgba(255,255,255,.45);
+    transition:transform .2s ease,box-shadow .2s ease;animation:breathe 2.6s ease-in-out infinite;
+  }
+  .btn::after{content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.6),transparent);transform:skewX(-20deg);animation:shine 3s ease-in-out infinite;}
+  @keyframes shine{0%,55%{left:-60%;}100%{left:130%;}}
+  @keyframes breathe{0%,100%{box-shadow:0 16px 34px -10px rgba(10,108,240,.65),0 0 0 0 rgba(10,108,240,.35);}50%{box-shadow:0 16px 34px -10px rgba(10,108,240,.65),0 0 0 12px rgba(10,108,240,0);}}
+  .btn:hover{transform:translateY(-3px) scale(1.02);}
+  .btn svg{width:21px;height:21px;flex:none;animation:arrowDrop 1.6s ease-in-out infinite;}
+  @keyframes arrowDrop{0%,100%{transform:translateY(-1px);}50%{transform:translateY(3px);}}
+  .meta{font-size:.84rem;color:var(--ink-mute);margin-top:12px;}
+  .meta strong{color:var(--blue);}
+
+  .trust{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:22px;}
+  .trust span{
+    display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line);
+    padding:8px 14px;border-radius:999px;font-size:.82rem;font-weight:600;color:var(--ink-soft);
+  }
+  .trust svg{width:15px;height:15px;color:var(--blue);}
+
+  /* ---------- Marquee ---------- */
+  .marquee{margin:34px 0 10px;background:var(--ink);color:#fff;transform:rotate(-1.5deg);padding:13px 0;overflow:hidden;white-space:nowrap;}
+  .marquee-track{display:inline-flex;gap:40px;animation:scroll 22s linear infinite;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.95rem;}
+  .marquee-track span{display:inline-flex;align-items:center;gap:40px;}
+  .marquee-track b{color:var(--amber);}
+  @keyframes scroll{to{transform:translateX(-50%);}}
+
+  /* ---------- Sections ---------- */
+  section{padding:56px 0;}
+  .head{text-align:center;max-width:58ch;margin:0 auto 34px;}
+  .kicker{display:inline-block;font-size:.74rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);background:#FFF1E6;padding:6px 12px;border-radius:999px;margin-bottom:12px;}
+  .head h2{font-size:clamp(1.7rem,3.8vw,2.5rem);font-weight:800;letter-spacing:-.02em;margin:0 0 10px;line-height:1.15;}
+  .head p{color:var(--ink-soft);margin:0;font-size:1rem;}
+
+  /* ---------- Install timeline ---------- */
+  .install{background:#fff;border-radius:30px;padding:38px 28px;box-shadow:var(--shadow-lg);border:1px solid var(--line);position:relative;overflow:hidden;}
+  .install::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:var(--grad);}
+  .timeline{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  .timeline .track{position:absolute;top:27px;left:12%;right:12%;height:4px;background:var(--bg-2);border-radius:4px;overflow:hidden;}
+  .timeline .track i{display:block;height:100%;width:0;background:var(--grad);border-radius:4px;transition:width 2.2s cubic-bezier(.4,0,.2,1);}
+  .timeline.in .track i{width:100%;}
+  .t-step{position:relative;text-align:center;padding:0 6px;}
+  .t-num{
+    width:56px;height:56px;margin:0 auto 14px;border-radius:50%;background:#fff;border:3px solid var(--bg-2);
+    display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.1rem;color:var(--ink-mute);
+    position:relative;z-index:1;transition:all .4s ease;
+  }
+  .timeline.in .t-step .t-num{background:var(--grad);color:#fff;border-color:#fff;box-shadow:0 10px 22px -8px rgba(10,108,240,.6);}
+  .timeline.in .t-step:nth-child(2) .t-num{transition-delay:.2s;}
+  .timeline.in .t-step:nth-child(3) .t-num{transition-delay:.7s;}
+  .timeline.in .t-step:nth-child(4) .t-num{transition-delay:1.2s;}
+  .timeline.in .t-step:nth-child(5) .t-num{transition-delay:1.7s;background:var(--warm);box-shadow:0 10px 22px -8px rgba(255,122,26,.7);animation:pop 1.6s 2.2s ease-in-out infinite;}
+  @keyframes pop{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+  .t-step h3{font-size:1rem;margin:0 0 6px;}
+  .t-step p{font-size:.86rem;color:var(--ink-soft);margin:0;}
+  .t-step.key .flag{display:inline-block;background:var(--orange);color:#fff;font-size:.64rem;font-weight:800;padding:3px 9px;border-radius:999px;letter-spacing:.05em;margin-bottom:8px;}
+  .note{margin-top:26px;display:flex;gap:12px;align-items:flex-start;font-size:.88rem;color:var(--ink-soft);background:#FFF7EE;border:1px dashed rgba(255,122,26,.45);border-radius:14px;padding:14px 16px;}
+  .note svg{width:20px;height:20px;color:var(--orange);flex:none;margin-top:1px;}
+
+  /* ---------- How it works ---------- */
+  .how{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .how-card{background:#fff;border-radius:var(--r);padding:28px 24px;border:1px solid var(--line);box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .3s ease,box-shadow .3s ease;}
+  .how-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);}
+  .how-card .big{position:absolute;right:-6px;top:-22px;font-family:'Plus Jakarta Sans',sans-serif;font-size:7rem;font-weight:800;color:var(--bg-2);line-height:1;z-index:0;}
+  .how-card > *{position:relative;z-index:1;}
+  .how-ic{width:52px;height:52px;border-radius:16px;background:var(--grad);display:flex;align-items:center;justify-content:center;margin-bottom:18px;box-shadow:0 10px 20px -8px rgba(10,108,240,.55);}
+  .how-card:nth-child(2) .how-ic{background:var(--warm);box-shadow:0 10px 20px -8px rgba(255,122,26,.55);}
+  .how-card:nth-child(3) .how-ic{background:linear-gradient(135deg,#3DDC84,#16B866);box-shadow:0 10px 20px -8px rgba(22,184,102,.55);}
+  .how-ic svg{width:26px;height:26px;color:#fff;}
+  .how-card h3{font-size:1.1rem;margin:0 0 8px;}
+  .how-card p{font-size:.92rem;color:var(--ink-soft);margin:0;}
+
+  /* ---------- Feature bento ---------- */
+  .bento{display:grid;grid-template-columns:1.3fr 1fr;grid-template-rows:auto auto;gap:18px;}
+  .bento .tile{background:#fff;border-radius:var(--r);padding:26px;border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .3s ease;}
+  .bento .tile:hover{transform:translateY(-4px);}
+  .tile.hero-tile{grid-row:span 2;background:var(--grad);color:#fff;border:none;position:relative;overflow:hidden;display:flex;flex-direction:column;}
+  .tile.hero-tile p{color:rgba(255,255,255,.88);}
+  .tile h3{font-size:1.08rem;margin:0 0 6px;}
+  .tile p{font-size:.9rem;color:var(--ink-soft);margin:0;}
+  .t-ic{width:44px;height:44px;border-radius:13px;background:var(--bg-2);display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
+  .t-ic svg{width:22px;height:22px;color:var(--blue);}
+  .hero-tile .t-ic{background:rgba(255,255,255,.2);}
+  .hero-tile .t-ic svg{color:#fff;}
+  .mini-phone{margin-top:auto;padding-top:22px;}
+  .mp-screen{background:#fff;border-radius:20px;padding:16px;box-shadow:0 20px 40px -18px rgba(0,0,0,.4);color:var(--ink);}
+  .mp-bal{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .mp-bal small{color:var(--ink-mute);font-size:.72rem;font-weight:600;display:block;}
+  .mp-bal b{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.1rem;}
+  .mp-bal .up{background:#E7F9EF;color:var(--green);font-size:.7rem;font-weight:800;padding:4px 9px;border-radius:999px;animation:blink 1.6s infinite;}
+  .mp-row{display:flex;align-items:center;gap:10px;padding:9px;border-radius:12px;background:var(--bg);margin-top:7px;}
+  .mp-row .d{width:24px;height:24px;border-radius:8px;background:var(--grad);flex:none;}
+  .mp-row .l{flex:1;height:7px;border-radius:4px;background:#DCE6F7;position:relative;overflow:hidden;}
+  .mp-row .l::after{content:'';position:absolute;inset:0;width:0;background:var(--grad);animation:fill 3s ease-in-out infinite;}
+  .mp-row:nth-child(3) .l::after{animation-delay:.8s;}
+  .mp-row:nth-child(4) .l::after{animation-delay:1.6s;}
+  @keyframes fill{0%{width:0;}60%,100%{width:100%;}}
+  .mp-row .s{font-size:.62rem;font-weight:800;color:#fff;background:var(--orange);padding:3px 7px;border-radius:6px;}
+  .mp-row.done .s{background:var(--green);}
+
+  /* ---------- Transparency ---------- */
+  .clear{background:var(--ink);color:#fff;border-radius:30px;padding:42px 30px;position:relative;overflow:hidden;}
+  .clear::before{content:'';position:absolute;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(56,194,255,.35),transparent 65%);top:-160px;right:-120px;animation:drift 14s ease-in-out infinite;}
+  .clear .head h2{color:#fff;}
+  .clear .head p{color:#B7C5E0;}
+  .clear .kicker{background:rgba(255,178,56,.15);color:var(--amber);}
+  .c-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;position:relative;}
+  .c-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:22px;transition:background .3s ease,transform .3s ease;}
+  .c-item:hover{background:rgba(255,255,255,.09);transform:translateY(-4px);}
+  .c-item .n{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.76rem;letter-spacing:.1em;color:var(--sky);display:block;margin-bottom:8px;}
+  .c-item p{margin:0;font-size:.9rem;color:#C9D5EC;}
+
+  /* ---------- FAQ ---------- */
+  .faq{max-width:760px;margin:0 auto;}
+  .faq details{background:#fff;border:1px solid var(--line);border-radius:16px;margin-bottom:12px;padding:0 20px;box-shadow:0 8px 20px -16px rgba(10,60,160,.3);transition:box-shadow .3s ease;}
+  .faq details[open]{box-shadow:var(--shadow);border-color:rgba(10,108,240,.3);}
+  .faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:14px;padding:18px 0;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.98rem;}
+  .faq summary::-webkit-details-marker{display:none;}
+  .plus{flex:none;width:28px;height:28px;border-radius:50%;background:var(--bg-2);position:relative;transition:background .3s ease,transform .3s ease;}
+  .plus::before,.plus::after{content:'';position:absolute;background:var(--blue);border-radius:2px;top:50%;left:50%;transition:transform .3s ease;}
+  .plus::before{width:12px;height:2px;transform:translate(-50%,-50%);}
+  .plus::after{width:2px;height:12px;transform:translate(-50%,-50%);}
+  details[open] .plus{background:var(--blue);transform:rotate(180deg);}
+  details[open] .plus::before,details[open] .plus::after{background:#fff;}
+  details[open] .plus::after{transform:translate(-50%,-50%) rotate(90deg);}
+  .faq .ans{color:var(--ink-soft);font-size:.92rem;margin:0 0 18px;animation:fadeDown .35s ease;}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+
+  /* ---------- Final CTA ---------- */
+  .final{text-align:center;background:linear-gradient(160deg,#FFFFFF,#EAF2FF);border:1px solid var(--line);border-radius:34px;padding:56px 24px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;}
+  .final .confetti{position:absolute;inset:0;pointer-events:none;}
+  .final .confetti i{position:absolute;width:10px;height:10px;border-radius:3px;opacity:.7;animation:fall 6s linear infinite;}
+  @keyframes fall{0%{transform:translateY(-40px) rotate(0);opacity:0;}10%{opacity:.8;}100%{transform:translateY(520px) rotate(540deg);opacity:0;}}
+  .final-logo{width:96px;height:96px;border-radius:50%;object-fit:contain;background:#fff;padding:6px;margin:0 auto 20px;box-shadow:0 0 0 6px #fff,0 18px 38px -10px rgba(10,108,240,.55);animation:bob 4s ease-in-out infinite;}
+  .final h2{font-size:clamp(1.7rem,4vw,2.6rem);margin:0 0 12px;letter-spacing:-.02em;position:relative;}
+  .final p{color:var(--ink-soft);max-width:48ch;margin:0 auto 26px;position:relative;}
+  .final .btn{position:relative;}
+
+  /* ---------- Footer ---------- */
+  footer{padding:40px 0 calc(110px + env(safe-area-inset-bottom,0px));margin-top:30px;border-top:1px solid var(--line);}
+  .f-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+  .f-links{display:flex;gap:20px;flex-wrap:wrap;font-size:.86rem;color:var(--ink-soft);}
+  .f-links a{text-decoration:none;}
+  .f-links a:hover{color:var(--blue);}
+  .f-note{font-size:.8rem;color:var(--ink-mute);margin-top:18px;max-width:72ch;line-height:1.6;}
+
+  /* ---------- Sticky mobile bar ---------- */
+  .sticky-bar{
+    position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:70;
+    background:rgba(255,255,255,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--line);border-radius:20px;padding:10px 10px 10px 14px;box-shadow:var(--shadow-lg);
+    display:none;align-items:center;gap:12px;transform:translateY(150%);transition:transform .45s cubic-bezier(.2,.9,.3,1.2);
+  }
+  .sticky-bar.show{transform:translateY(0);}
+  .sticky-bar img{width:40px;height:40px;border-radius:50%;object-fit:contain;background:#fff;box-shadow:0 0 0 1px var(--line);}
+  .sticky-bar .sb-t{flex:1;line-height:1.2;}
+  .sticky-bar .sb-t b{font-family:'Plus Jakarta Sans',sans-serif;font-size:.92rem;display:block;}
+  .sticky-bar .sb-t small{font-size:.74rem;color:var(--ink-mute);}
+  .sticky-bar a{background:var(--warm);color:#fff;text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.9rem;padding:12px 18px;border-radius:14px;box-shadow:0 10px 20px -8px rgba(255,122,26,.7);}
+
+  /* ---------- Download toast ---------- */
+  #dl-toast{
+    position:fixed;left:50%;top:calc(18px + env(safe-area-inset-top,0px));transform:translate(-50%,-160%);
+    background:#fff;color:var(--ink);padding:14px 20px;border-radius:16px;border:1px solid rgba(22,184,102,.35);
+    font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.9rem;box-shadow:var(--shadow-lg);
+    transition:transform .4s cubic-bezier(.2,.9,.3,1.2),opacity .25s ease;z-index:100;display:flex;align-items:center;gap:10px;opacity:0;
+    width:max-content;max-width:calc(100vw - 32px);
+  }
+  #dl-toast.show{transform:translate(-50%,0);opacity:1;}
+  #dl-toast svg{width:22px;height:22px;color:var(--green);flex:none;}
+  #dl-toast small{display:block;font-family:'Inter',sans-serif;font-weight:500;color:var(--ink-soft);font-size:.78rem;}
+
+  /* ---------- Reveal on scroll ---------- */
+  .reveal{opacity:0;transform:translateY(34px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.2,1);}
+  .reveal.in{opacity:1;transform:none;}
+  .d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}
+  .hero .reveal{transition-duration:.9s;}
+
+  @media (max-width:860px){
+    .how,.c-grid{grid-template-columns:1fr;}
+    .bento{grid-template-columns:1fr;}
+    .tile.hero-tile{grid-row:auto;}
+    .timeline{grid-template-columns:1fr;gap:22px;}
+    .timeline .track{top:28px;bottom:28px;left:27px;right:auto;width:4px;height:auto;}
+    .timeline .track i{width:100%;height:0;transition:height 2.2s cubic-bezier(.4,0,.2,1);}
+    .timeline.in .track i{height:100%;}
+    .t-step{display:grid;grid-template-columns:56px 1fr;gap:16px;text-align:left;align-items:start;padding:0;}
+    .t-num{margin:0;}
+    .t-step.key .flag{margin-bottom:6px;}
+    .cf1{left:-40px;} .cf2{right:-46px;}
+    .btn{width:100%;}
+    .sticky-bar{display:flex;}
+  }
+  @media (max-width:420px){
+    .orbit-stage{width:200px;height:200px;}
+    .app-icon,.pulse-ring{inset:48px;}
+    .cf1{left:-24px;top:4px;} .cf2{right:-28px;bottom:10px;}
+    .install,.clear{padding:30px 18px;}
+    .nav-cta span{display:none;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none !important;transition:none !important;}
+    .reveal{opacity:1;transform:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-blobs" aria-hidden="true">
+  <div class="grid-bg"></div>
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+</div>
+
+<header id="top-header">
+  <div class="nav wrap">
+    <div class="brand">
+      <img src="RscoinPay.png" alt="RS Coin Pay">
+      <span>RS <span class="grad-text">Coin Pay</span></span>
+    </div>
+    <a href="RscoinPay.apk" download="RscoinPay.apk" class="nav-cta" id="nav-download">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+      <span>Download App</span>
+    </a>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="reveal"><span class="pill"><span class="tag"><i></i>LIVE</span>New tasks added daily · Free Android app</span></div>
+
+      <div class="orbit-stage reveal d1">
+        <div class="ring"><span class="sat"></span></div>
+        <div class="ring r2"><span class="sat"></span></div>
+        <div class="pulse-ring"></div>
+        <div class="app-icon"><img src="RscoinPay.png" alt="RS Coin Pay app icon"></div>
+        <div class="chip-float cf1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg>Task Done</div>
+        <div class="chip-float cf2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Balance Up</div>
+      </div>
+
+      <h1 class="reveal d2">Turn Your <span class="rotator warm-text" id="rotator"><span>Free Time</span></span><br><span class="grad-text">Into Rewards.</span></h1>
+      <p class="hero-sub reveal d2">Scrolling reels for hours earns you nothing. With <strong>RS Coin Pay</strong>, every simple guided task you finish adds a reward to your in-app balance. <strong>Install in 60 seconds</strong> and start your first task today.</p>
+
+      <div class="reveal d3">
+        <a href="RscoinPay.apk" download="RscoinPay.apk" class="btn" id="hero-download-top">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+          Download RS Coin Pay APK
+        </a>
+        <p class="meta">Android · ~7.5 MB · After download tap <strong>Install → Open</strong></p>
+        <div class="trust">
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>100% Free</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>Lightweight · Fast</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2 3 7v6c0 5 4 8.5 9 9 5-.5 9-4 9-9V7l-9-5Z"/></svg>Minimal Permissions</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>Simple Guided Tasks <b>✦</b> In-App Wallet <b>✦</b> Work At Your Own Pace <b>✦</b> Free To Download <b>✦</b> Track Every Reward <b>✦</b></span>
+        <span>Simple Guided Tasks <b>✦</b> In-App Wallet <b>✦</b> Work At Your Own Pace <b>✦</b> Free To Download <b>✦</b> Track Every Reward <b>✦</b></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTALL -->
+  <section id="install">
+    <div class="wrap">
+      <div class="install reveal">
+        <div class="head">
+          <span class="kicker">Downloaded? Don't stop here</span>
+          <h2>Install &amp; Open In <span class="grad-text">4 Quick Taps</span></h2>
+          <p>Your tasks live inside the app — the download alone isn't enough. Do this once.</p>
+        </div>
+        <div class="timeline" id="timeline">
+          <div class="track"><i></i></div>
+          <div class="t-step">
+            <div class="t-num">1</div>
+            <div><h3>Tap The Download</h3><p>Open <strong>RscoinPay.apk</strong> from your notification bar or Downloads folder.</p></div>
+          </div>
+          <div class="t-step">
+            <div class="t-num">2</div>
+            <div><h3>Allow Install</h3><p>If asked, tap <strong>Settings → Allow from this source</strong>, then go back.</p></div>
+          </div>
+          <div class="t-step">
+            <div class="t-num">3</div>
+            <div><h3>Tap Install</h3><p>Takes just a few seconds — the app is only about 7.5 MB.</p></div>
+          </div>
+          <div class="t-step key">
+            <div class="t-num">4</div>
+            <div><span class="flag">MOST IMPORTANT</span><h3>Tap Open</h3><p>Create your account and start your <strong>first task</strong> right away.</p></div>
+          </div>
+        </div>
+        <div class="note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+          <span>Seeing a "file might be harmful" message? It appears for every app downloaded outside the Play Store. Tap <strong>Download anyway</strong> to continue.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section id="how">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="kicker">How it works</span>
+        <h2>From Install To <span class="grad-text">First Reward</span></h2>
+        <p>Three simple steps. No experience needed.</p>
+      </div>
+      <div class="how">
+        <div class="how-card reveal">
+          <span class="big">1</span>
+          <div class="how-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg></div>
+          <h3>Install &amp; Open</h3>
+          <p>Download the APK, install it, open it and create your account.</p>
+        </div>
+        <div class="how-card reveal d1">
+          <span class="big">2</span>
+          <div class="how-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></svg></div>
+          <h3>Pick A Task</h3>
+          <p>Browse the task list inside the app and start the one you like.</p>
+        </div>
+        <div class="how-card reveal d2">
+          <span class="big">3</span>
+          <div class="how-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></div>
+          <h3>Complete &amp; Earn</h3>
+          <p>Finish the task — your reward is added straight to your in-app balance.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="kicker">Inside the app</span>
+        <h2>Simple, Fast &amp; <span class="warm-text">Crystal Clear</span></h2>
+        <p>Everything on one screen — no confusion.</p>
+      </div>
+      <div class="bento">
+        <div class="tile hero-tile reveal">
+          <div class="t-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M16 13h.01M2 10h20"/></svg></div>
+          <h3>In-App Wallet</h3>
+          <p>Watch your balance update after each completed task, right on your home screen.</p>
+          <div class="mini-phone">
+            <div class="mp-screen">
+              <div class="mp-bal"><div><small>Your Balance</small><b>RS Coin Pay</b></div><span class="up">UPDATED</span></div>
+              <div class="mp-row done"><span class="d"></span><span class="l"></span><span class="s">DONE</span></div>
+              <div class="mp-row"><span class="d"></span><span class="l"></span><span class="s">START</span></div>
+              <div class="mp-row"><span class="d"></span><span class="l"></span><span class="s">START</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="tile reveal d1">
+          <div class="t-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg></div>
+          <h3>Guided Tasks</h3>
+          <p>Every task comes with clear step-by-step instructions, so anyone can complete it.</p>
+        </div>
+        <div class="tile reveal d2">
+          <div class="t-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+          <h3>Your Time, Your Pace</h3>
+          <p>Morning, lunch break or night — do tasks whenever you're free. No fixed schedule.</p>
+        </div>
+        <div class="tile reveal d1" style="grid-column:1/-1;">
+          <div class="t-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg></div>
+          <h3>Track Your Progress</h3>
+          <p>Check your full task history and balance anytime inside the app.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRANSPARENCY -->
+  <section id="transparency">
+    <div class="wrap">
+      <div class="clear reveal">
+        <div class="head">
+          <span class="kicker">Full transparency</span>
+          <h2>How The Reward System Works</h2>
+          <p>We want you to have full information before you install.</p>
+        </div>
+        <div class="c-grid">
+          <div class="c-item reveal"><span class="n">TASK TYPE</span><p>The app offers simple activity-based tasks, each with clear steps to follow.</p></div>
+          <div class="c-item reveal d1"><span class="n">REWARD</span><p>Your reward appears in your in-app balance after you complete a task. The amount can vary by task.</p></div>
+          <div class="c-item reveal d2"><span class="n">PERMISSIONS</span><p>The app only asks for permissions required for tasks and your account — details are available inside the app.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="kicker">FAQ</span>
+        <h2>Got Questions?</h2>
+      </div>
+      <div class="faq">
+        <details class="reveal" open><summary>Is the app free?<span class="plus"></span></summary><p class="ans">Yes, downloading and installing RS Coin Pay is free.</p></details>
+        <details class="reveal"><summary>I downloaded it — what now?<span class="plus"></span></summary><p class="ans">Open the downloaded file, tap Install, then tap Open. Your tasks are only visible after you open the app and create your account.</p></details>
+        <details class="reveal"><summary>Why isn't it on the Play Store?<span class="plus"></span></summary><p class="ans">RS Coin Pay is distributed directly as an APK from this page. Android shows a standard warning for any app installed this way — allow installation from your browser to continue.</p></details>
+        <details class="reveal"><summary>When do I get my reward?<span class="plus"></span></summary><p class="ans">Your reward is added to your in-app balance when you complete a task. Withdrawal rules are explained inside the app.</p></details>
+        <details class="reveal"><summary>Is my data safe?<span class="plus"></span></summary><p class="ans">The app only collects information needed to operate. See the Privacy Policy for full details.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section id="download">
+    <div class="wrap">
+      <div class="final reveal">
+        <div class="confetti" id="confetti"></div>
+        <img class="final-logo" src="RscoinPay.png" alt="RS Coin Pay">
+        <h2>Your First Task Is <span class="warm-text">Waiting</span></h2>
+        <p>Download the APK, install it, open the app and complete your first task today.</p>
+        <a href="RscoinPay.apk" download="RscoinPay.apk" class="btn" id="final-download">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+          Download RS Coin Pay APK
+        </a>
+        <p class="meta">Free · Android · ~7.5 MB</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="f-row">
+      <div class="brand" style="font-size:1rem;">
+        <img src="RscoinPay.png" alt="RS Coin Pay">
+        <span>RS <span class="grad-text">Coin Pay</span></span>
+      </div>
+      <div class="f-links">
+        <a href="#faq">FAQ</a>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms.html">Terms &amp; Conditions</a>
+      </div>
+    </div>
+    <p class="f-note">
+      RS Coin Pay is a task-based app. Rewards depend on task completion and may vary.
+      Please read the Terms &amp; Conditions and Privacy Policy inside the app before installing or using it.
+    </p>
+  </div>
+</footer>
+
+<!-- Sticky mobile download bar -->
+<div class="sticky-bar" id="sticky-bar">
+  <img src="RscoinPay.png" alt="">
+  <div class="sb-t"><b>RS Coin Pay</b><small>Free · Android · ~7.5 MB</small></div>
+  <a href="RscoinPay.apk" download="RscoinPay.apk" id="sticky-download">Download</a>
+</div>
+
+<div id="dl-toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+  <span>Download started<small>Open the file → Install → Open</small></span>
+</div>
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1667445958325300');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1667445958325300&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+
+<script>
+  // Standard, honest download tracking — fires as soon as the user actually
+  // clicks a download button. No delay filtering, no fake-click suppression.
+  function trackDownloadClick(){
+    if (typeof fbq === 'function') {
+      fbq('track', 'Lead', { content_name: 'RS Coin Pay APK Download' });
+    }
+    var toast = document.getElementById('dl-toast');
+    toast.classList.add('show');
+    setTimeout(function(){ toast.classList.remove('show'); }, 3200);
+  }
+
+  document.querySelectorAll('#nav-download, #hero-download-top, #final-download, #sticky-download')
+    .forEach(function(el){
+      el.addEventListener('click', trackDownloadClick);
+    });
+</script>
+
+<!-- UI animations only (no tracking logic here) -->
+<script>
+  (function(){
+    // Header shadow on scroll + sticky bar after hero
+    var header = document.getElementById('top-header');
+    var bar = document.getElementById('sticky-bar');
+    var heroBtn = document.getElementById('hero-download-top');
+    function onScroll(){
+      header.classList.toggle('scrolled', window.scrollY > 10);
+      var r = heroBtn.getBoundingClientRect();
+      bar.classList.toggle('show', r.bottom < 0);
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+
+    // Reveal on scroll
+    var els = document.querySelectorAll('.reveal, #timeline');
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        });
+      }, {threshold:0.15, rootMargin:'0px 0px -40px 0px'});
+      els.forEach(function(el){ io.observe(el); });
+    } else {
+      els.forEach(function(el){ el.classList.add('in'); });
+    }
+
+    // Rotating hook word
+    var words = ['Free Time','Lunch Breaks','Bus Rides','Spare Minutes'];
+    var i = 0, rot = document.getElementById('rotator');
+    setInterval(function(){
+      i = (i + 1) % words.length;
+      rot.innerHTML = '<span>' + words[i] + '</span>';
+    }, 2400);
+
+    // Confetti in final CTA
+    var c = document.getElementById('confetti');
+    var colors = ['#0A6CF0','#38C2FF','#FF7A1A','#FFB238','#16B866'];
+    for (var k = 0; k < 18; k++) {
+      var p = document.createElement('i');
+      p.style.left = (Math.random() * 100) + '%';
+      p.style.background = colors[k % colors.length];
+      p.style.animationDelay = (Math.random() * 6) + 's';
+      p.style.animationDuration = (5 + Math.random() * 3) + 's';
+      c.appendChild(p);
+    }
+  })();
+</script>
+
+</body>
+</html>
